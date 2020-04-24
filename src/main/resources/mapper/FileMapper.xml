@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hnu.graduate.net_disk.dao.FileMapper">
+    <resultMap id="resultMap" type="com.hnu.graduate.net_disk.model.FileMeterial">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="file_id" jdbcType="VARCHAR" property="fileId"/>
+        <result column="t_set" jdbcType="VARCHAR" property="tSet"/>
+        <result column="x_set" jdbcType="VARCHAR" property="xSet"/>
+        <result column="keyword" jdbcType="VARCHAR" property="keyword"/>
+        <result column="descri" jdbcType="VARCHAR" property="descri"/>
+        <result column="author" jdbcType="VARCHAR" property="author"/>
+        <result column="item_name" jdbcType="VARCHAR" property="itemName"/>
+        <result column="mtime" jdbcType="TIMESTAMP" property="mtime"/>
+    </resultMap>
+    <select id="select" resultMap="resultMap">
+        SELECT
+        id,
+        file_id,
+        t_set,
+        x_set,
+        keyword,
+        descri,
+        author,
+        item_name,
+        mtime
+        FROM file_material
+        <where>
+            #{id} = id
+        </where>
+    </select>
+
+    <insert id="insertFile" parameterType="com.hnu.graduate.net_disk.model.FileMeterial">
+        insert into file_material
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="fileId != null" >
+                file_id,
+            </if>
+            <if test="tSet != null" >
+                t_set,
+            </if>
+            <if test="xSet != null" >
+                x_set,
+            </if>
+            <if test="keyword != null" >
+                keyword,
+            </if>
+            <if test="descri != null" >
+                descri,
+            </if>
+            <if test="author != null" >
+                author,
+            </if>
+            <if test="itemName != null" >
+                item_name,
+            </if>
+            <if test="mtime != null" >
+                mtime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="fileId != null" >
+                #{fileId,jdbcType=BIGINT},
+            </if>
+            <if test="tSet != null" >
+                #{tSet,jdbcType=VARCHAR},
+            </if>
+            <if test="xSet != null" >
+                #{xSet,jdbcType=VARCHAR},
+            </if>
+            <if test="keyword != null" >
+                #{keyword,jdbcType=BIGINT},
+            </if>
+            <if test="descri != null" >
+                #{descri,jdbcType=TIMESTAMP},
+            </if>
+            <if test="author != null" >
+                #{author,jdbcType=TIMESTAMP},
+            </if>
+            <if test="itemName != null" >
+                #{itemName,jdbcType=TIMESTAMP},
+            </if>
+            <if test="mtime != null" >
+                #{mtime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+</mapper>
