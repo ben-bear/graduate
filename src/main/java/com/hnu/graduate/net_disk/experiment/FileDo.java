@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -15,7 +16,12 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FileDo {
+public class FileDo implements Serializable {
     int fileId;
     List<String> kwList;
+    String kw;
+    String author;
+    String desc;
+    String fileName;
+    String authorName;
 }
