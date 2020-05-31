@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
+ * 系统controller，接受来自前端的http请求。实现CRUD
  * @author muyunhao
  * @date 2020/4/18 10:20 下午
  */
@@ -22,6 +23,11 @@ public class FileController {
     @Resource
     FileService fileService;
 
+    /**
+     * 根据字串查询文件
+     * @param kw
+     * @return
+     */
     @RequestMapping("/query")
     @CrossOrigin
     public List<FileDo> queryController(@RequestParam String kw) {
@@ -29,6 +35,10 @@ public class FileController {
         return fileService.query(kw);
     }
 
+    /**
+     * 上传文件
+     * @param fileDo
+     */
     @PostMapping("/insert")
     @CrossOrigin
     public void insertController(@RequestBody FileDo fileDo) {
@@ -45,8 +55,8 @@ public class FileController {
         jpbcService.insertFile(file);
     }
 
-    @DeleteMapping("/delete/{alias}")
-    public void delete(@PathVariable("alias") String alias) {
-        System.out.println(alias);
+    @GetMapping("/delete/{fileId}")
+    public void delete(@PathVariable("fileId") Integer fileId) {
+        fileService.del(fileId);
     }
 }

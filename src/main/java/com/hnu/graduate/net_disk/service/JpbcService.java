@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author muyunhao
@@ -89,7 +88,6 @@ public class JpbcService {
     }
 
     private Integer str2Integer(String str) {
-//        System.out.println("str:" + str + "  val: "+ str.chars().sum());
         return str.chars().sum();
     }
 
