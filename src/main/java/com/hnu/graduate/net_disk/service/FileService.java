@@ -3,6 +3,7 @@ package com.hnu.graduate.net_disk.service;
 import com.google.common.collect.Lists;
 import com.hnu.graduate.net_disk.experiment.BuildIndex;
 import com.hnu.graduate.net_disk.experiment.FileDo;
+import com.hnu.graduate.net_disk.experiment.RandomUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -52,8 +53,12 @@ public class FileService {
      * 上传文件
      * @param tDo 文件实体类
      */
-    public void insert(FileDo tDo) {
+    public void insert(FileDo tDo) throws Exception {
         log.info("上传文件内容为:{}", tDo);
+        String content = tDo.getOriginContent();
+        String encContent = RandomUtils.encryptAES(content);
+        tDo.setEncContent(encContent);
+        log.info("加密前的文件内容:{}, 加密后的文件内容:{}", tDo.getOriginContent(), tDo.getEncContent());
         fileList.add(tDo);
         // 在client端上传文件后，重新构建文件加密索引
         BuildIndex buildIndex = new BuildIndex();

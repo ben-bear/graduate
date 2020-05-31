@@ -25,4 +25,6 @@ public class FileDo implements Serializable {
     String desc;
     String fileName;
     String authorName;
+    String encContent;
+    String originContent;
 }
