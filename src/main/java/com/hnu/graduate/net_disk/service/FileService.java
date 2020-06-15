@@ -1,8 +1,11 @@
 package com.hnu.graduate.net_disk.service;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.hnu.graduate.net_disk.experiment.BuildIndex;
 import com.hnu.graduate.net_disk.experiment.FileDo;
+import com.hnu.graduate.net_disk.experiment.FileTreeNode;
 import com.hnu.graduate.net_disk.experiment.RandomUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -10,7 +13,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -71,5 +74,79 @@ public class FileService {
     public void del(Integer fileId) {
         log.info("想要删除的文件id为:{}", fileId);
         fileList.removeIf(f -> f.getFileId() == fileId);
+    }
+
+    /**
+     * 返回root
+     */
+    public FileTreeNode treeView() {
+        Set<String> subStringSet = Sets.newHashSet();
+        Queue<FileTreeNode> queue = new LinkedList<>();
+        // 所有字串集合
+        fileList.forEach(fileDo -> {
+            String kw = fileDo.getKw();
+            for (int i = 0; i < kw.length() - 1; i++) {
+                subStringSet.add(kw.substring(i, i + 2));
+            }
+        });
+        fileList.forEach(fileDo -> {
+            FileTreeNode fileTreeNode = new FileTreeNode();
+            fileTreeNode.setLeft(null);
+            fileTreeNode.setRight(null);
+            fileTreeNode.setLeaf(true);
+            String kw = fileDo.getKw();
+            Map<String, Boolean> indexMap = Maps.newHashMap();
+            for (int i = 0; i < kw.length() - 1; i++) {
+                indexMap.put(kw.substring(i, i + 2), true);
+            }
+            fileTreeNode.setSubIndexMap(indexMap);
+            queue.offer(fileTreeNode);
+        });
+
+        // 算出最底层叶子节点的个数
+        int sz = queue.size();
+        int level = 0;
+        int extraNum = 0;
+        for (int k = 1; k < 10; k++) {
+            if (Math.pow(2, k) >= sz) {
+                level = k + 1;
+                extraNum = (int) ((Math.pow(2, k) - sz) * 2);
+                break;
+            }
+        }
+        log.info("Tree level:" + level);
+
+        // 构造最底层的叶子结点
+        for (int k = 0; k < extraNum; k++) {
+            FileTreeNode leftNode = queue.poll();
+            FileTreeNode rightNode = queue.poll();
+            FileTreeNode curNode = new FileTreeNode();
+            curNode.setLeaf(false);
+            curNode.setLeft(leftNode);
+            curNode.setRight(rightNode);
+            Map<String, Boolean> m = Maps.newHashMap();
+            m.putAll(leftNode.getSubIndexMap());
+            m.putAll(rightNode.getSubIndexMap());
+            curNode.setSubIndexMap(m);
+            queue.offer(curNode);
+            k += 2;
+        }
+
+        while (queue.size() != 1) {
+            FileTreeNode leftNode = queue.poll();
+            FileTreeNode rightNode = queue.poll();
+            FileTreeNode curNode = new FileTreeNode();
+            curNode.setLeaf(false);
+            curNode.setLeft(leftNode);
+            curNode.setRight(rightNode);
+            Map<String, Boolean> m = Maps.newHashMap();
+            m.putAll(leftNode.getSubIndexMap());
+            m.putAll(rightNode.getSubIndexMap());
+            curNode.setSubIndexMap(m);
+            queue.offer(curNode);
+        }
+
+        FileTreeNode root = queue.peek();
+        return root;
     }
 }
