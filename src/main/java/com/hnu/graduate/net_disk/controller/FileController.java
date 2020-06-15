@@ -1,8 +1,10 @@
 package com.hnu.graduate.net_disk.controller;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.hnu.graduate.net_disk.experiment.FileDo;
 import com.hnu.graduate.net_disk.experiment.FileTreeNode;
+import com.hnu.graduate.net_disk.experiment.RandomUtils;
 import com.hnu.graduate.net_disk.model.FileMeterial;
 import com.hnu.graduate.net_disk.service.FileService;
 import com.hnu.graduate.net_disk.service.JpbcService;
@@ -12,6 +14,7 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 
 /**
@@ -75,7 +78,13 @@ public class FileController {
             for (int i = 0; i < sz; i++) {
                 FileTreeNode head = queue.poll();
                 assert head != null;
-                outputStr.append(head.getSubIndexMap()).append("   ");
+
+                Map<String, Boolean> mm = Maps.newHashMap();
+                head.getSubIndexMap().entrySet().forEach(entry -> {
+                    mm.put(RandomUtils.md5(entry.getKey()), entry.getValue());
+                });
+                // 如果需要明文展示，将下方#{mm}换成head.getSubIndexMap()
+                outputStr.append(mm).append("   ");
                 if (head.getLeft() != null) {
                     queue.offer(head.getLeft());
                 }

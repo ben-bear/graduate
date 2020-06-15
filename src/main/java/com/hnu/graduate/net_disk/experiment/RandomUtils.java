@@ -8,6 +8,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Optional;
 
 /**
  * @author muyunhao
@@ -22,39 +23,33 @@ public class RandomUtils {
     static String IV = "0123456789abcdef";
 
     /**
-     * 伪随机函数ft。用var1，var2的字符asi码之和作为随机结果
+     * 伪随机函数ft。用var1，var2的字符asi码之和作为随机结果,之后用对其md5值取模
      * @param v1 var1
      * @param v2 var2
      * @return 随机数
      */
     static Integer ft(String v1, String v2) {
-        return v1.chars().sum() + v2.chars().sum();
-//        String s = String.valueOf(v1.chars().sum() + v2.chars().sum());
-//        return md(s);
+        return Optional.ofNullable(md5(String.valueOf(v1.chars().sum() + v2.chars().sum()))).map(s -> s.chars().sum() / 1000).orElse(0);
     }
 
     /**
-     * 伪随机函数fp。用var1，var2的字符asi码之和*2,作为随机结果
+     * 伪随机函数fp。用var1，var2的字符asi码之和*2,作为随机结果,之后用对其md5值取模
      * @param v1 var1
      * @param v2 var2
      * @return 随机数
      */
     static Integer fp(String v1, String v2) {
-        return (v1.chars().sum() + v2.chars().sum()) * 2;
-//        String s = String.valueOf((v1.chars().sum() + v2.chars().sum()) * 2);
-//        return md(s);
+        return Optional.ofNullable(md5(String.valueOf((v1.chars().sum() + v2.chars().sum()) * 2))).map(s -> s.chars().sum() / 1000).orElse(0);
     }
 
     /**
-     * 加密函数enc。用var1，var2的字符asi码之和*3,作为随机结果
+     * 加密函数enc。用var1，var2的字符asi码之和*3,作为随机结果，之后用对其md5值取模
      * @param v1 var1
      * @param v2 var2
      * @return 随机数
      */
     static Integer enc(String v1, String v2) {
-        return v1.chars().sum() + v2.chars().sum() * 3;
-//        String s = String.valueOf((v1.chars().sum() + v2.chars().sum()) * 3);
-//        return md(s);
+        return Optional.ofNullable(md5(String.valueOf((v1.chars().sum() + v2.chars().sum()) * 3))).map(s -> s.chars().sum() / 1000).orElse(0);
     }
 
     public static String encryptAES(String data) throws Exception {
@@ -103,7 +98,7 @@ public class RandomUtils {
         }
     }
 
-    private static String md5(String s) {
+    public static String md5(String s) {
         try {
             MessageDigest m;
             m = MessageDigest.getInstance("MD5");
@@ -114,4 +109,5 @@ public class RandomUtils {
         }
         return null;
     }
+
 }
